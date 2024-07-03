@@ -1,6 +1,8 @@
 require("dotenv").config();
 import request from "request";
 
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 let postWebhook = (req, res) =>{
     // Parse the request body from the POST
     let body = req.body;
@@ -173,7 +175,36 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    callSendAPI(sender_psid,`sample message` );
+   
+
+    const gemini_api_key = process.env.GEMINI;
+    const googleAI = new GoogleGenerativeAI(gemini_api_key);
+    const geminiConfig = {
+    temperature: 0.9,
+    topP: 1,
+    topK: 1,
+    maxOutputTokens: 4096,
+    };
+    
+    const geminiModel = googleAI.getGenerativeModel({
+    model: "gemini-pro",
+    geminiConfig,
+    });
+    
+    const generate = async () => {
+        try {
+            const prompt = message;
+            const result = await geminiModel.generateContent(prompt);
+            const response = result.response;
+            console.log(response.text());
+            callSendAPI(sender_psid,response.text());
+        } catch (error) {
+            console.log("response error", error);
+            callSendAPI(sender_psid,"something went wrong" );
+        }
+    };
+    
+    generate();
     // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     // let entityChosen = "";
     // entitiesArr.forEach((name) => {
