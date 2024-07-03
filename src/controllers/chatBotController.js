@@ -172,6 +172,8 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
+    callSendAPI(sender_psid,message);
+
     let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
@@ -184,6 +186,7 @@ function handleMessage(sender_psid, message) {
     if(entityChosen === ""){
         //default
         callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
+        // callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
     }else{
        if(entityChosen === "wit$greetings"){
            //send greetings message
