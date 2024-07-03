@@ -193,8 +193,8 @@ function handleMessage(sender_psid, message) {
     
     const generate = async () => {
         try {
-            const prompt = message; console.log(message);
-            const result = await geminiModel.generateContent("hello");
+            const prompt = message.text;
+            const result = await geminiModel.generateContent(prompt);
             const response = result.response;
             console.log(response.text());
             callSendAPI(sender_psid,response.text());
