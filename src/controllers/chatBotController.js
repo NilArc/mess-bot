@@ -166,42 +166,44 @@ function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822
 
+    //IF YOU SEND IMAGE, VIDEO, AUDIO, ... MESSAGE
     if( message && message.attachments && message.attachments[0].payload){
         callSendAPI(sender_psid, "Thank you for watching my video !!!");
         callSendAPIWithTemplate(sender_psid);
         return;
     }
 
-    callSendAPI(sender_psid,message);
+    callSendAPI(sender_psid,`sample message` );
+    // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
+    // let entityChosen = "";
+    // entitiesArr.forEach((name) => {
+    //     let entity = firstTrait(message.nlp, name);
+    //     if (entity && entity.confidence > 0.8) {
+    //         entityChosen = name;
+    //     }
+    // });
 
-    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
-    let entityChosen = "";
-    entitiesArr.forEach((name) => {
-        let entity = firstTrait(message.nlp, name);
-        if (entity && entity.confidence > 0.8) {
-            entityChosen = name;
-        }
-    });
 
-    if(entityChosen === ""){
-        //default
-        callSendAPI(sender_psid,message);
-        callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
-        // callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
-    }else{
-       if(entityChosen === "wit$greetings"){
-           //send greetings message
-           callSendAPI(sender_psid,'Hi there! This bot is created by Hary Pham. Watch more videos on HaryPhamDev Channel!');
-       }
-       if(entityChosen === "wit$thanks"){
-           //send thanks message
-           callSendAPI(sender_psid,`You 're welcome!`);
-       }
-        if(entityChosen === "wit$bye"){
-            //send bye message
-            callSendAPI(sender_psid,'bye-bye!');
-        }
-    }
+
+    // if(entityChosen === ""){
+    //     //default
+    //     callSendAPI(sender_psid,message);
+    //     callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
+    //     // callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
+    // }else{
+    //    if(entityChosen === "wit$greetings"){
+    //        //send greetings message
+    //        callSendAPI(sender_psid,'Hi there! This bot is created by Hary Pham. Watch more videos on HaryPhamDev Channel!');
+    //    }
+    //    if(entityChosen === "wit$thanks"){
+    //        //send thanks message
+    //        callSendAPI(sender_psid,`You 're welcome!`);
+    //    }
+    //     if(entityChosen === "wit$bye"){
+    //         //send bye message
+    //         callSendAPI(sender_psid,'bye-bye!');
+    //     }
+    // }
 }
 
 let callSendAPIWithTemplate = (sender_psid) => {
