@@ -4,21 +4,21 @@ import request from "request";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const express = require('express');
-const session = require('express-session');
+// const session = require('express-session');
 const app = express();
 
 // setup the session to save the conversation
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    resave: true
-}));
+// app.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     saveUninitialized: true,
+//     resave: true
+// }));
 
-app.get('/setSession', (req, res) => {
-    req.session.myString = '';
-    // res.send('Session string has been set');
-    console.log('Session string has been set');
-});
+// app.get('/setSession', (req, res) => {
+//     req.session.myString = '';
+//     // res.send('Session string has been set');
+//     console.log('Session string has been set');
+// });
 
 // api model
 const gemini_api_key = process.env.GEMINI;
@@ -31,7 +31,7 @@ const gemini_api_key = process.env.GEMINI;
     };
     
 const geminiModel = googleAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-pro",
     geminiConfig,
 });
 
