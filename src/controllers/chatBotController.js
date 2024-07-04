@@ -20,6 +20,21 @@ app.get('/setSession', (req, res) => {
     console.log('Session string has been set');
 });
 
+// api model
+const gemini_api_key = process.env.GEMINI;
+    const googleAI = new GoogleGenerativeAI(gemini_api_key);
+    const geminiConfig = {
+    temperature: 0.9,
+    topP: 1,
+    topK: 1,
+    maxOutputTokens: 4096,
+    };
+    
+const geminiModel = googleAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    geminiConfig,
+});
+
 
 let postWebhook = (req, res) =>{
     // Parse the request body from the POST
@@ -193,38 +208,32 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-   
-
-    const gemini_api_key = process.env.GEMINI;
-    const googleAI = new GoogleGenerativeAI(gemini_api_key);
-    const geminiConfig = {
-    temperature: 0.9,
-    topP: 1,
-    topK: 1,
-    maxOutputTokens: 4096,
-    };
-    
-    const geminiModel = googleAI.getGenerativeModel({
-    model: "gemini-pro",
-    geminiConfig,
-    });
     
     const generate = async () => {
         try {
-            let prompt = message.text;
+            const prompt = message.text;
 
-            app.get('/getSession', (req, res) => {
-                req.session.myString = req.session.myString + "\n\n" + prompt;
-                prompt = req.session.myString;
-                if (sessionString) {
-                    res.send('Session string: ' + sessionString);
-                    console.log('save to session');
-                } else {
-                    console.log('Session string not found');
-                }
-            });
+            // app.get('/getSession', (req, res) => {
+            //     req.session.myString = req.session.myString + "\n\n" + prompt;
+            //     prompt = req.session.myString;
 
-            const result = await geminiModel.generateContent(prompt);
+            //     if (sessionString) {
+            //         res.send('Session string: ' + sessionString);
+            //         console.log('save to session');
+            //     } else {
+            //         console.log('Session string not found');
+            //     }
+            // });
+
+            const chatSession = model.startChat({
+                generationConfig,
+             // safetySettings: Adjust safety settings
+             // See https://ai.google.dev/gemini-api/docs/safety-settings
+                history: [
+                ],
+              });
+
+            const result = await chatSession.sendMessage(prompt);
             const response = result.response;
             console.log(response.text());
             callSendAPI(sender_psid,response.text());
