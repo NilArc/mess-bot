@@ -30,7 +30,7 @@ const gemini_api_key = process.env.GEMINI;
     maxOutputTokens: 4096,
     };
     
-const geminiModel = googleAI.getGenerativeModel({
+const model = googleAI.getGenerativeModel({
     model: "gemini-pro",
     geminiConfig,
 });
@@ -215,7 +215,9 @@ const generate = async (sender_psid,message) => {
         // });
 
         const chatSession = model.startChat({
-            generationConfig,
+            generationConfig: {
+                maxOutputTokens: 100,
+              },
          // safetySettings: Adjust safety settings
          // See https://ai.google.dev/gemini-api/docs/safety-settings
             history: [
@@ -223,7 +225,7 @@ const generate = async (sender_psid,message) => {
           });
 
         const result = await chatSession.sendMessage(prompt);
-        const response = result.response;
+        const response = await result.response;
         console.log(response.text());
         callSendAPI(sender_psid,response.text());
     } catch (error) {
