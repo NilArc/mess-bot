@@ -197,6 +197,43 @@ function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
+// func thatwill use gemini to generate response
+const generate = async (sender_psid,message) => {
+    try {
+        const prompt = message.text;
+
+        // app.get('/getSession', (req, res) => {
+        //     req.session.myString = req.session.myString + "\n\n" + prompt;
+        //     prompt = req.session.myString;
+
+        //     if (sessionString) {
+        //         res.send('Session string: ' + sessionString);
+        //         console.log('save to session');
+        //     } else {
+        //         console.log('Session string not found');
+        //     }
+        // });
+
+        const chatSession = model.startChat({
+            generationConfig,
+         // safetySettings: Adjust safety settings
+         // See https://ai.google.dev/gemini-api/docs/safety-settings
+            history: [
+            ],
+          });
+
+        const result = await chatSession.sendMessage(prompt);
+        const response = result.response;
+        console.log(response.text());
+        callSendAPI(sender_psid,response.text());
+    } catch (error) {
+        console.log("response error", error);
+        callSendAPI(sender_psid,"something went wrong" );
+    }
+};
+
+
+
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822
@@ -208,73 +245,8 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    
-    const generate = async () => {
-        try {
-            const prompt = message.text;
+    generate(sender_psid,message);
 
-            // app.get('/getSession', (req, res) => {
-            //     req.session.myString = req.session.myString + "\n\n" + prompt;
-            //     prompt = req.session.myString;
-
-            //     if (sessionString) {
-            //         res.send('Session string: ' + sessionString);
-            //         console.log('save to session');
-            //     } else {
-            //         console.log('Session string not found');
-            //     }
-            // });
-
-            const chatSession = model.startChat({
-                generationConfig,
-             // safetySettings: Adjust safety settings
-             // See https://ai.google.dev/gemini-api/docs/safety-settings
-                history: [
-                ],
-              });
-
-            const result = await chatSession.sendMessage(prompt);
-            const response = result.response;
-            console.log(response.text());
-            callSendAPI(sender_psid,response.text());
-        } catch (error) {
-            console.log("response error", error);
-            callSendAPI(sender_psid,"something went wrong" );
-        }
-    };
-    
-    generate();
-
-    // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
-    // let entityChosen = "";
-    // entitiesArr.forEach((name) => {
-    //     let entity = firstTrait(message.nlp, name);
-    //     if (entity && entity.confidence > 0.8) {
-    //         entityChosen = name;
-    //     }
-    // });
-
-
-
-    // if(entityChosen === ""){
-    //     //default
-    //     callSendAPI(sender_psid,message);
-    //     callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
-    //     // callSendAPI(sender_psid,`The bot is needed more training, try to say "thanks a lot" or "hi" to the bot` );
-    // }else{
-    //    if(entityChosen === "wit$greetings"){
-    //        //send greetings message
-    //        callSendAPI(sender_psid,'Hi there! This bot is created by Hary Pham. Watch more videos on HaryPhamDev Channel!');
-    //    }
-    //    if(entityChosen === "wit$thanks"){
-    //        //send thanks message
-    //        callSendAPI(sender_psid,`You 're welcome!`);
-    //    }
-    //     if(entityChosen === "wit$bye"){
-    //         //send bye message
-    //         callSendAPI(sender_psid,'bye-bye!');
-    //     }
-    // }
 }
 
 let callSendAPIWithTemplate = (sender_psid) => {
