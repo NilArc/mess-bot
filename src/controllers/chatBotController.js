@@ -8,25 +8,25 @@ const session = require('express-session');
 const app = express();
 
 // setup the session to save the conversation
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    resave: true
-}));
+// app.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     saveUninitialized: true,
+//     resave: true
+// }));
 
-app.get('/setSession', (req, res) => {
-    req.session.chatSession= model.startChat({
-        generationConfig: {
-            maxOutputTokens: 100,
-          },
-     // safetySettings: Adjust safety settings
-     // See https://ai.google.dev/gemini-api/docs/safety-settings
-        history: [
-        ],
-      });
-    // res.send('Session string has been set');
-    console.log('Session string has been set');
-});
+// app.get('/setSession', (req, res) => {
+//     req.session.chatSession= model.startChat({
+//         generationConfig: {
+//             maxOutputTokens: 100,
+//           },
+//      // safetySettings: Adjust safety settings
+//      // See https://ai.google.dev/gemini-api/docs/safety-settings
+//         history: [
+//         ],
+//       });
+//     // res.send('Session string has been set');
+//     console.log('Session string has been set');
+// });
 
 // api model
 const gemini_api_key = process.env.GEMINI;
@@ -39,7 +39,7 @@ const gemini_api_key = process.env.GEMINI;
     };
     
 const model = googleAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-pro",
     geminiConfig,
 });
 
@@ -232,10 +232,16 @@ async function generate(sender_psid,message){
         //     }
         // });
 
-        
+        const chatSession = model.startChat({
+            generationConfig,
+         // safetySettings: Adjust safety settings
+         // See https://ai.google.dev/gemini-api/docs/safety-settings
+            history: [
+            ],
+          });
 
-        const result = await req.session.chatSession.sendMessage(prompt);
-        const response = await result.response;
+        const result = await chatSession.sendMessage(prompt);
+        const response = result.response;
         console.log(response.text());
         callSendAPI(sender_psid,response.text());
     } catch (error) {
