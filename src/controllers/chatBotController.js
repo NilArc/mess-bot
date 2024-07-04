@@ -4,21 +4,29 @@ import request from "request";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const express = require('express');
-// const session = require('express-session');
+const session = require('express-session');
 const app = express();
 
 // setup the session to save the conversation
-// app.use(session({
-//     secret: process.env.SESSION_SECRET,
-//     saveUninitialized: true,
-//     resave: true
-// }));
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: true
+}));
 
-// app.get('/setSession', (req, res) => {
-//     req.session.myString = '';
-//     // res.send('Session string has been set');
-//     console.log('Session string has been set');
-// });
+app.get('/setSession', (req, res) => {
+    req.session.chatSession= model.startChat({
+        generationConfig: {
+            maxOutputTokens: 100,
+          },
+     // safetySettings: Adjust safety settings
+     // See https://ai.google.dev/gemini-api/docs/safety-settings
+        history: [
+        ],
+      });
+    // res.send('Session string has been set');
+    console.log('Session string has been set');
+});
 
 // api model
 const gemini_api_key = process.env.GEMINI;
@@ -34,6 +42,16 @@ const model = googleAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     geminiConfig,
 });
+
+// const chatSession = model.startChat({
+//     generationConfig: {
+//         maxOutputTokens: 100,
+//       },
+//  // safetySettings: Adjust safety settings
+//  // See https://ai.google.dev/gemini-api/docs/safety-settings
+//     history: [
+//     ],
+//   });
 
 
 let postWebhook = (req, res) =>{
@@ -198,7 +216,7 @@ function firstTrait(nlp, name) {
 }
 
 // func thatwill use gemini to generate response
-const generate = async (sender_psid,message) => {
+async function generate(sender_psid,message){
     try {
         const prompt = message.text;
 
@@ -214,17 +232,9 @@ const generate = async (sender_psid,message) => {
         //     }
         // });
 
-        const chatSession = model.startChat({
-            generationConfig: {
-                maxOutputTokens: 100,
-              },
-         // safetySettings: Adjust safety settings
-         // See https://ai.google.dev/gemini-api/docs/safety-settings
-            history: [
-            ],
-          });
+        
 
-        const result = await chatSession.sendMessage(prompt);
+        const result = await req.session.chatSession.sendMessage(prompt);
         const response = await result.response;
         console.log(response.text());
         callSendAPI(sender_psid,response.text());
@@ -239,6 +249,9 @@ const generate = async (sender_psid,message) => {
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822
+    if(message.text=="!history"){
+
+    }
 
     //IF YOU SEND IMAGE, VIDEO, AUDIO, ... MESSAGE
     if( message && message.attachments && message.attachments[0].payload){
