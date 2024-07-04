@@ -211,7 +211,7 @@ function handleMessage(sender_psid, message) {
     
     const generate = async () => {
         try {
-            const prompt = message.text;
+            let prompt = message.text;
 
             app.get('/getSession', (req, res) => {
                 req.session.myString = req.session.myString + "\n\n" + prompt;
