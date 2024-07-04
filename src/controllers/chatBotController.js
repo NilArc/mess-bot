@@ -3,6 +3,24 @@ import request from "request";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const express = require('express');
+const session = require('express-session');
+const app = express();
+
+// setup the session to save the conversation
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: true
+}));
+
+app.get('/setSession', (req, res) => {
+    req.session.myString = '';
+    // res.send('Session string has been set');
+    console.log('Session string has been set');
+});
+
+
 let postWebhook = (req, res) =>{
     // Parse the request body from the POST
     let body = req.body;
@@ -194,6 +212,18 @@ function handleMessage(sender_psid, message) {
     const generate = async () => {
         try {
             const prompt = message.text;
+
+            app.get('/getSession', (req, res) => {
+                req.session.myString = req.session.myString + "\n\n" + prompt;
+                prompt = req.session.myString;
+                if (sessionString) {
+                    res.send('Session string: ' + sessionString);
+                    console.log('save to session');
+                } else {
+                    console.log('Session string not found');
+                }
+            });
+
             const result = await geminiModel.generateContent(prompt);
             const response = result.response;
             console.log(response.text());
@@ -205,6 +235,7 @@ function handleMessage(sender_psid, message) {
     };
     
     generate();
+
     // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     // let entityChosen = "";
     // entitiesArr.forEach((name) => {
