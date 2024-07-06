@@ -1,24 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Home page</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-</head>
-<body>
-<h1> </h1>
-<!-- Load Facebook SDK for JavaScript -->
-<div id="fb-root"></div>
-<script>
-    
-</script>
+    <head>
+        <title>Home page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-<!-- Your Chat Plugin code -->
-<div class="fb-customerchat"
-     attribution=setup_tool
-     page_id="106149991223927"
-     theme_color="#0084ff">
-</div>
-</body>
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body>
+
+        <table></table>
+    </body>
+
+    <h2>Enter Text and Add to Table</h2>
+
+    <input type="text" id="textInput">
+    <button onclick="addTextToTable(true)">Add to Table</button>
+
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>Text</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be added dynamically -->
+        </tbody>
+    </table>
+
+    <footer>
+        <script>
+            function addTextToTable(is_person=false) {
+
+            var inputText = document.getElementById("textInput").value;
+
+            if(!is_person) {
+                var inputText = run(inputText);
+            }
+            
+            var table = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+            var cell = newRow.insertCell(0);
+            cell.textContent = inputText;
+            
+            }
+
+            require("dotenv").config();
+            import request from "request";
+
+            import { GoogleGenerativeAI } from "@google/generative-ai";
+
+            const express = require('express');
+            // const session = require('express-session');
+            const app = express();
+
+
+            // api model
+            const gemini_api_key = process.env.GEMINI;
+                const googleAI = new GoogleGenerativeAI(gemini_api_key);
+                const geminiConfig = {
+                temperature: 0.9,
+                topP: 1,
+                topK: 1,
+                maxOutputTokens: 4096,
+                };
+                
+                const model = googleAI.getGenerativeModel({
+                    model: "gemini-pro",
+                    geminiConfig,
+                });
+
+                async function run(prompt) {
+                // Provide a prompt that contains text
+                const prompt = prompt
+
+                // To generate text output, call generateContent with the text input
+                const result = await model.generateContent(prompt);
+
+                const response = result.response;
+                const text = response.text();
+                return text;
+            }
+        </script>
+    </footer>
 </html>

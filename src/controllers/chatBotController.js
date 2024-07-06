@@ -24,6 +24,7 @@ const model = googleAI.getGenerativeModel({
 });
 
 
+
 let postWebhook = (req, res) =>{
     // Parse the request body from the POST
     let body = req.body;
@@ -185,7 +186,7 @@ function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
-async function run(message) {
+async function generate(message) {
     // Provide a prompt that contains text
   
     // To generate text output, call generateContent with the text input
@@ -203,7 +204,7 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    callSendAPI(sender_psid, run(message));
+    callSendAPI(sender_psid, generate(message));
 
     // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     // let entityChosen = "";
