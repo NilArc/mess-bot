@@ -187,12 +187,23 @@ function firstTrait(nlp, name) {
 }
 
 async function generate(sender_psid,message) {
-    // Provide a prompt that contains text
+    const chat = model.startChat({
+        history: [
+          {
+            role: "user",
+            parts: [{ text: "Hello" }],
+          },
+        ],
+        generationConfig: {
+          maxOutputTokens: 300,
+        },
+      });
   
     // To generate text output, call generateContent with the text input
-    const result = await model.generateContent(message.text);
+    const result = await chat.sendMessage(message.text);
+    const response = await result.response;
     // return result.response.text();
-    callSendAPI(sender_psid, result.response.text());
+    callSendAPI(sender_psid, response.text());
 }
 
 function handleMessage(sender_psid, message) {
