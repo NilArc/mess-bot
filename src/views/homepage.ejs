@@ -18,29 +18,7 @@
                 text-align: left;
             }
         </style>
-    </head>
-    <body>
 
-        <table></table>
-    </body>
-
-    <h2>Enter Text and Add to Table</h2>
-
-    <input type="text" id="textInput">
-    <button onclick="addTextToTable(true)">Add to Table</button>
-
-    <table id="myTable">
-        <thead>
-            <tr>
-                <th>Text</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Table rows will be added dynamically -->
-        </tbody>
-    </table>
-
-    <footer>
         <script>
             function addTextToTable(is_person=false) {
 
@@ -94,5 +72,29 @@
                 return text;
             }
         </script>
+    </head>
+    <body>
+
+        <table></table>
+    </body>
+
+    <h2>Enter Text and Add to Table</h2>
+
+    <input type="text" id="textInput">
+    <button onclick="addTextToTable(true)">Add to Table</button>
+
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>Text</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be added dynamically -->
+        </tbody>
+    </table>
+
+    <footer>
+        
     </footer>
 </html>
