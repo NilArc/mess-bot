@@ -233,7 +233,9 @@ async function generate(sender_psid,message){
         // });
 
         const chatSession = model.startChat({
-            generationConfig,
+            generationConfig: {
+                maxOutputTokens: 100,
+              },
          // safetySettings: Adjust safety settings
          // See https://ai.google.dev/gemini-api/docs/safety-settings
             history: [
