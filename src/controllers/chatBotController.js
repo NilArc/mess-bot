@@ -186,12 +186,13 @@ function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
-async function generate(message) {
+async function generate(sender_psid,message) {
     // Provide a prompt that contains text
   
     // To generate text output, call generateContent with the text input
     const result = await model.generateContent(message.text);
-    return result.response.text();
+    // return result.response.text();
+    callSendAPI(sender_psid, result.response.text());
 }
 
 function handleMessage(sender_psid, message) {
@@ -204,8 +205,7 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    callSendAPI(sender_psid, generate(message));
-
+    generate(sender_psid,message);
     // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     // let entityChosen = "";
     // entitiesArr.forEach((name) => {
