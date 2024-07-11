@@ -28,7 +28,7 @@ const gemini_api_key = process.env.GEMINI;
     };
     
 const model = googleAI.getGenerativeModel({
-    model: "gemini-pro",
+    model: "gemini-1.5-flash",
     geminiConfig,
 });
 
