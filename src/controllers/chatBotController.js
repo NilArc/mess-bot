@@ -3,6 +3,9 @@ import request from "request";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const { LocalStorage } = require('node-localstorage');
+const localStorage = new LocalStorage('./scratch');
+
 const express = require('express');
 // const session = require('express-session');
 const app = express();
