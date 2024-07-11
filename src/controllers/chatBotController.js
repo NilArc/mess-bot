@@ -7,6 +7,12 @@ const express = require('express');
 // const session = require('express-session');
 const app = express();
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+}));
+
 
 // api model
 const gemini_api_key = process.env.GEMINI;
@@ -186,14 +192,10 @@ function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
-async function generate(sender_psid,message) {
+async function generate(sender_psid,message,history) {
+
     const chat = model.startChat({
-        history: [
-          {
-            role: "user",
-            parts: [{ text: "Hello" }],
-          },
-        ],
+        history,
         generationConfig: {
           maxOutputTokens: 300,
         },
@@ -203,6 +205,28 @@ async function generate(sender_psid,message) {
     const result = await chat.sendMessage(message.text);
     const response = await result.response;
     // return result.response.text();
+
+    //add user message to dictionary
+    let userMessage = {
+        role: "user",
+        parts: [{ text: message.text }],
+    };
+    //add bot message to dictionary
+    let botMessage = {
+        role: "model",
+        parts: [{ text: response.text() }], //response.text()
+    };
+
+    //add user message and bot message to history
+    history.push(userMessage);
+    history.push(botMessage);
+
+    // Convert history to string
+    let historyString = JSON.stringify(history);
+
+    // Store in localStorage
+    localStorage.setItem(sender_psid, historyString);
+
     callSendAPI(sender_psid, response.text());
 }
 
@@ -216,7 +240,19 @@ function handleMessage(sender_psid, message) {
         return;
     }
 
-    generate(sender_psid,message);
+    //load the data from cache and check it is initialized or not
+    let cachedHistoryString = localStorage.getItem(sender_psid);
+    var history = [];
+    if (cachedHistoryString) {
+        //if yes
+        history = JSON.parse(cachedHistoryString);
+      }
+
+
+    // let cachedHistory = JSON.parse(cachedHistoryString);
+
+
+    generate(sender_psid,message,history);
     // let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     // let entityChosen = "";
     // entitiesArr.forEach((name) => {
